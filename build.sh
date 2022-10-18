@@ -15,16 +15,6 @@
 
 set -eu
 
-get_ext_name()
-{
-	ARCH="$(shell uname -m)"
-	if [ ${ARCH} -eq "x86_64" ]; then
-		return "zip"
-	else
-		return "tar.gz"
-	fi
-}
-
 PROFILER_BRANCH=get-cpu-lock-event-sw
 DIR=$(cd `dirname $0`; pwd)
 PROFILER_PATH=${DIR}/build/async-profiler

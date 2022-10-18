@@ -16,44 +16,53 @@
 
 package io.kindling.agent.profiler;
 
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import io.kindling.agent.deps.one.profiler.AsyncProfiler;
-import io.kindling.agent.util.DefaultThreadFactory;
 import io.kindling.agent.service.ServiceFactory;
+import io.kindling.agent.util.DefaultThreadFactory;
 
 public class Profiler {
-    private final long intervalMs;
-    private final int depth;
+    private final AsyncProfilerOptions options;
     private final AsyncProfiler instance;
-    private boolean profilingStarted = false;
     private ScheduledExecutorService executor;
+    private AsyncProfilerStarter starter;
 
-    public Profiler(long intervalMs, int depth, String libPath) {
-        this.intervalMs = intervalMs;
-        this.depth = depth;
-        this.instance = libPath == null ? null : AsyncProfiler.getInstance(libPath);
-        this.executor = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("Kindling AsyncProfiler", true));
+    public Profiler(Map<String, String> featureMap, String libPath) {
+        this.options = new AsyncProfilerOptions(featureMap);
+        if (options.getEvent().hasEvent()) {
+            this.instance = libPath == null ? null : AsyncProfiler.getInstance(libPath);
+            if (this.instance == null) {
+                ServiceFactory.LOG.error("Fail to Init Async Profiler");
+            }
+            if (options.enableCollectCpu()) {
+                this.executor = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("Kindling AsyncProfiler", true));
+            }
+            this.starter = options.enableCollectCpu() ? AsyncProfilerStarter.UNKNOWN_CPU : AsyncProfilerStarter.NO_CPU;
+        } else {
+            this.instance = null;
+        }
     }
 
     public synchronized void start() throws Exception {
         if (instance == null) {
-            ServiceFactory.LOG.error("Fail to Start Async Profiler");
             return;
         }
-        AsyncProfilerStarter.start(this.instance, intervalMs, depth);
-        this.profilingStarted = true;
-        executor.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                try {
-                    dump();
-                } catch (Throwable cause) {
-                    cause.printStackTrace();
+        this.starter.start(this.instance, this.options);
+        if (executor != null) {
+            executor.scheduleAtFixedRate(new Runnable() {
+                public void run() {
+                    try {
+                        dump();
+                    } catch (Throwable cause) {
+                        cause.printStackTrace();
+                    }
                 }
-            }
-        }, intervalMs, intervalMs, TimeUnit.MILLISECONDS);
+            }, options.getIntervalMs(), options.getIntervalMs(), TimeUnit.MILLISECONDS);
+        }
     }
 
     public synchronized void stop() throws Exception {
@@ -68,9 +77,6 @@ public class Profiler {
     }
 
     final synchronized void dump() throws Exception {
-        if (this.profilingStarted == false) {
-            throw new IllegalStateException("Profiling is not started");
-        }
         this.instance.execute("print");
     }
 }

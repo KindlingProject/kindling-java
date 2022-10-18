@@ -21,10 +21,10 @@ import java.lang.instrument.Instrumentation;
 import java.util.Map;
 
 import io.kindling.agent.api.AgentType;
-import io.kindling.agent.profiler.AsyncProfilerOptions;
 import io.kindling.agent.service.LogService;
 import io.kindling.agent.service.ServiceFactory;
 import io.kindling.agent.service.ServiceManagerImpl;
+import io.kindling.agent.util.AttachOptions;
 
 public class KindlingAgent {
     public static void premain(Map<String, String> featureMap, Instrumentation instrumentation, File agentJarFile) throws Exception {
@@ -36,12 +36,12 @@ public class KindlingAgent {
             return;
         }
 
-        AsyncProfilerOptions.prepareOutFile(featureMap);
+        AttachOptions.prepareOutFile(featureMap);
         boolean attach = AgentType.Attach.equals(agentType);
-        ServiceFactory.setLogService(new LogService(AsyncProfilerOptions.getLogFile(featureMap)));
-        ServiceFactory.setServiceManager(new ServiceManagerImpl(AsyncProfilerOptions.getIntervalMs(featureMap), AsyncProfilerOptions.getDepth(featureMap), attach, agentJarFile, instrumentation));
+        ServiceFactory.setLogService(new LogService(AttachOptions.getLogFile(featureMap)));
+        ServiceFactory.setServiceManager(new ServiceManagerImpl(featureMap, attach, agentJarFile, instrumentation));
         if (attach) {
-            ServiceFactory.setLogService(new LogService(AsyncProfilerOptions.getDefaultLogFile()));
+            ServiceFactory.setLogService(new LogService(AttachOptions.getDefaultLogFile()));
         }
     }
 }

@@ -79,7 +79,6 @@ public class KindlingBootstrap {
             }
         } catch (AttachException cause) {
             writer.error(cause.getAction(), cause.getMessage());
-            cause.printStackTrace();
         }
         writer.flushAndclose();
     }
@@ -154,12 +153,22 @@ public class KindlingBootstrap {
             // KeyValue split by =.
             final String[] kvSegmentArray = kvPairSegmentString.split("=");
             if (kvSegmentArray.length == 1) {
-                featureMap.put(kvSegmentArray[0], "");
+                putValue(featureMap, kvSegmentArray[0], "");
             } else if (kvSegmentArray.length == 2 && !isBlankString(kvSegmentArray[0]) && !isBlankString(kvSegmentArray[1])) {
-                featureMap.put(kvSegmentArray[0], kvSegmentArray[1]);
+                putValue(featureMap, kvSegmentArray[0], kvSegmentArray[1]);
             }
         }
         return featureMap;
+    }
+
+    private static void putValue(Map<String, String> map, String key, String value) {
+        if (map.containsKey(key)) {
+            if (value != null && value.length() > 0) {
+                map.put(key, map.get(key) + "," + value);
+            }
+        } else {
+            map.put(key, value);
+        }
     }
 
     private static boolean isBlankString(final String str) {

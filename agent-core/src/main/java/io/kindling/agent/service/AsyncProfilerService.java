@@ -17,15 +17,16 @@
 package io.kindling.agent.service;
 
 import java.io.File;
+import java.util.Map;
 
 import io.kindling.agent.profiler.Profiler;
 
 public class AsyncProfilerService extends AbstractService {
     private Profiler profiler;
 
-    public AsyncProfilerService(long intervalMs, int depth, File agentJar) {
+    public AsyncProfilerService(Map<String, String> featureMap, File agentJar) {
         super("Async Profiler", true, true);
-        profiler = new Profiler(intervalMs, depth, agentJar.getParent() + "/libasyncProfiler.so");
+        profiler = new Profiler(featureMap, agentJar.getParent() + "/libasyncProfiler.so");
     }
 
     protected void doStart() throws Exception {

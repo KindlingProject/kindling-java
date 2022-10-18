@@ -20,6 +20,7 @@ import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.kindling.agent.instrument.ClassTransfromService;
 import io.kindling.agent.instrument.aspect.AopRegistryService;
@@ -28,12 +29,12 @@ import io.kindling.agent.instrument.aspect.ScanService;
 public class ServiceManagerImpl implements ServiceManager {
     private final List<Service> services;
 
-    public ServiceManagerImpl(long intervalMs, int depth, boolean attach, File agentJar, Instrumentation instrumentation) {
+    public ServiceManagerImpl(Map<String, String> featureMap, boolean attach, File agentJar, Instrumentation instrumentation) {
         this.services = new ArrayList<Service>();
         this.services.add(new ScanService(agentJar)); // Scan @AdvicePointCut
         this.services.add(new AopRegistryService()); // Registry Advice
         this.services.add(new ClassTransfromService(instrumentation, attach)); // ClassTransform
-        this.services.add(new AsyncProfilerService(intervalMs, depth, agentJar)); // AsyncProfiler
+        this.services.add(new AsyncProfilerService(featureMap, agentJar)); // AsyncProfiler
     }
 
     public synchronized void start() {
