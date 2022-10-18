@@ -33,6 +33,11 @@
 			<outputDirectory>${project.version}</outputDirectory>
 		</file>
 		<file>
+			<source>${project.basedir}/../agent-plugins/plugin-traceid-sw/target/plugin-traceid-sw-${project.version}.jar</source>
+			<destName>plugin-traceid-sw.jar</destName>
+			<outputDirectory>${project.version}</outputDirectory>
+		</file>
+		<file>
 			<source>${project.basedir}/../agent-boot/target/agent-boot-${project.version}.jar</source>
 			<destName>agent-boot.jar</destName>
 		</file>

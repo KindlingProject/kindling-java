@@ -19,19 +19,19 @@ package io.kindling.boot.exception;
 public class AttachException extends RuntimeException {
     private static final long serialVersionUID = 8715037747809610026L;
 
-	private final String action;
+    private final String action;
 
     public AttachException(String action, String msg) {
         super(msg);
         this.action = action;
     }
-    
+
     public AttachException(String action, String msg, Throwable cause) {
         super(msg, cause);
         this.action = action;
     }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 }

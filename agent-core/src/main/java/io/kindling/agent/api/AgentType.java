@@ -19,17 +19,17 @@ package io.kindling.agent.api;
 import java.util.Map;
 
 public enum AgentType {
-	Agent,
-	Attach,
-	Detach;
-	
-	public static AgentType getAgentType(Map<String, String> featureMap) {
-		if (featureMap.containsKey("start")) {
-			return Attach;
-		}
-		if (featureMap.containsKey("stop")) {
+    Agent,
+    Attach,
+    Detach;
+
+    public static AgentType getAgentType(Map<String, String> featureMap) {
+        if (featureMap.containsKey("start")) {
+            return Attach;
+        }
+        if (featureMap.containsKey("stop")) {
             return Detach;
         }
-		return Agent;
-	}
+        return Agent;
+    }
 }

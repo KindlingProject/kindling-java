@@ -22,27 +22,26 @@ import java.util.Map;
 
 import io.kindling.agent.api.AgentType;
 import io.kindling.agent.profiler.AsyncProfilerOptions;
-import io.kindling.agent.profiler.Profiler;
-import io.kindling.agent.util.FileWriter;
+import io.kindling.agent.service.LogService;
+import io.kindling.agent.service.ServiceFactory;
+import io.kindling.agent.service.ServiceManagerImpl;
 
 public class KindlingAgent {
-	private static Profiler profiler;
-
     public static void premain(Map<String, String> featureMap, Instrumentation instrumentation, File agentJarFile) throws Exception {
         AgentType agentType = AgentType.getAgentType(featureMap);
         if (AgentType.Detach.equals(agentType)) {
-            if (profiler != null) {
-            	profiler.stop();
-            	profiler = null;
+            if (ServiceFactory.isAgentActive()) {
+                ServiceFactory.stopService();
             }
             return;
         }
 
-        if (profiler == null) {
-            FileWriter writer = new FileWriter(AsyncProfilerOptions.getLogFile(featureMap));
-
-            profiler = new Profiler(AsyncProfilerOptions.getIntervalMs(featureMap), AsyncProfilerOptions.getDepth(featureMap), agentJarFile.getParent() + "/libasyncProfiler.so");
-            profiler.start(writer);
+        AsyncProfilerOptions.prepareOutFile(featureMap);
+        boolean attach = AgentType.Attach.equals(agentType);
+        ServiceFactory.setLogService(new LogService(AsyncProfilerOptions.getLogFile(featureMap)));
+        ServiceFactory.setServiceManager(new ServiceManagerImpl(AsyncProfilerOptions.getIntervalMs(featureMap), AsyncProfilerOptions.getDepth(featureMap), attach, agentJarFile, instrumentation));
+        if (attach) {
+            ServiceFactory.setLogService(new LogService(AsyncProfilerOptions.getDefaultLogFile()));
         }
     }
 }

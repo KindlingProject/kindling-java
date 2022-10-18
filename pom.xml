@@ -30,9 +30,12 @@
 	</properties>
 
 	<modules>
+		<module>agent-api</module>
 		<module>agent-boot</module>
 		<module>agent-dependency</module>
 		<module>agent-core</module>
+		<module>agent-thirds</module>
+		<module>agent-plugins</module>
 		<module>agent-package</module>
 	</modules>
 

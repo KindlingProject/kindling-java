@@ -27,6 +27,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>io.kindling</groupId>
+			<artifactId>agent-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.kindling</groupId>
 			<artifactId>agent-dependency</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -40,6 +45,12 @@
 			<groupId>io.kindling</groupId>
 			<artifactId>agent-core</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.kindling</groupId>
+			<artifactId>plugin-traceid-sw</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>

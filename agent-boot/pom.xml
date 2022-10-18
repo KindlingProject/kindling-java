@@ -34,6 +34,8 @@
 						<manifestEntries>
 							<Agent-Class>io.kindling.boot.KindlingBootstrap</Agent-Class>
 							<Premain-Class>io.kindling.boot.KindlingBootstrap</Premain-Class>
+							<Can-Redefine-Classes>true</Can-Redefine-Classes>
+							<Can-Retransform-Classes>true</Can-Retransform-Classes>
 						</manifestEntries>
 					</archive>
 				</configuration>

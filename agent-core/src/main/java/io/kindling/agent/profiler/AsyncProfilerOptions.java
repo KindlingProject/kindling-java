@@ -16,34 +16,37 @@
 
 package io.kindling.agent.profiler;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 public enum AsyncProfilerOptions {
     Interval("kindling_interval", "interval", "10000000"),
     Depth("kindling_depth", "jstackdepth", "20"),
-    LogFile("kindling_log", "log", "/tmp/kindling/agent.log");
+    LogFile("kindling_log", "log", "/tmp/kindling/agent.log"),
+    OutFile("kindling_out", "out", "/dev/null");
 
-	private final String property;
+    private final String property;
     private final String key;
     private final String defaultValue;
 
     private AsyncProfilerOptions(String property, String key, String defaultValue) {
-    	this.property = property;
+        this.property = property;
         this.key = key;
         this.defaultValue = defaultValue;
     }
-    
+
     private String getOptionValue(Map<String, String> featureMap) {
-    	String value = null;
-    	if (featureMap.isEmpty()) {
-    		value = System.getProperty(property, defaultValue);
+        String value = null;
+        if (featureMap.isEmpty()) {
+            value = System.getProperty(property, defaultValue);
         } else {
-        	value = featureMap.get(key);
+            value = featureMap.get(key);
         }
-    	if (value == null) {
-    		return defaultValue;
-    	}
-    	return value == null ? defaultValue : value;
+        if (value == null) {
+            return defaultValue;
+        }
+        return value == null ? defaultValue : value;
     }
 
     public static long getIntervalMs(Map<String, String> featureMap) {
@@ -65,8 +68,20 @@ public enum AsyncProfilerOptions {
     public static String getLogFile(Map<String, String> featureMap) {
         return LogFile.getOptionValue(featureMap);
     }
-    
+
     public static String getDefaultLogFile() {
         return LogFile.defaultValue;
+    }
+
+    public static void prepareOutFile(Map<String, String> featureMap) throws IOException {
+        String outFile = OutFile.getOptionValue(featureMap);
+
+        if (OutFile.defaultValue.equals(outFile) == false) {
+            File out = new File(outFile);
+            if (out.exists() == false) {
+                out.createNewFile();
+            }
+        }
+        System.setProperty("kindling_out", outFile);
     }
 }

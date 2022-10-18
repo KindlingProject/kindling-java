@@ -18,29 +18,28 @@ package io.kindling.agent.profiler;
 
 import io.kindling.agent.deps.one.profiler.AsyncProfiler;
 import io.kindling.agent.deps.one.profiler.Events;
-import io.kindling.agent.util.FileWriter;
+import io.kindling.agent.service.ServiceFactory;
 
 public class AsyncProfilerStarter {
-	public static void start(AsyncProfiler instance, long interval, int depth, FileWriter writer) throws Exception {
-		try {
-			writer.log("Check CPU...");
-			executeCommand(instance, "check", Events.CPU, interval, depth, writer);
-			writer.log("Start CPU...");
-			executeCommand(instance, "start", Events.CPU, interval, depth, writer);
-		} catch (IllegalStateException ex) {
-			try {
-			    writer.log("CPU Not Supported, Cause: " + ex.getMessage() + ", Use alluser instead.");
-			    executeCommand(instance, "check,alluser", Events.CPU, interval, depth, writer);
-				executeCommand(instance, "start,alluser", Events.CPU, interval, depth, writer);
-			} catch (IllegalStateException alluserEx) {
-			    writer.log("CPU alluser Not Supported, Cause: " + alluserEx.getMessage() + ", Use itimer instead.");
-			    executeCommand(instance, "start", Events.ITIMER, interval, depth, writer);
-			}
-		}
-	}
-	
-	
-	private static String executeCommand(AsyncProfiler instance, String command, String event, long interval, int depth, FileWriter writer) throws Exception {
-		return instance.execute(command + ",event=" + event + ",interval=" + interval + "m,jstackdepth=" + depth + ",event=" + Events.LOCK + ",threads");
-	}
+    public static void start(AsyncProfiler instance, long interval, int depth) throws Exception {
+        try {
+            ServiceFactory.LOG.info("Check CPU...");
+            executeCommand(instance, "check", Events.CPU, interval, depth);
+            ServiceFactory.LOG.info("Start CPU...");
+            executeCommand(instance, "start", Events.CPU, interval, depth);
+        } catch (IllegalStateException ex) {
+            try {
+                ServiceFactory.LOG.info("CPU Not Supported, Cause: " + ex.getMessage() + ", Use alluser instead.");
+                executeCommand(instance, "check,alluser", Events.CPU, interval, depth);
+                executeCommand(instance, "start,alluser", Events.CPU, interval, depth);
+            } catch (IllegalStateException alluserEx) {
+                ServiceFactory.LOG.info("CPU alluser Not Supported, Cause: " + alluserEx.getMessage() + ", Use itimer instead.");
+                executeCommand(instance, "start", Events.ITIMER, interval, depth);
+            }
+        }
+    }
+
+    private static String executeCommand(AsyncProfiler instance, String command, String event, long interval, int depth) throws Exception {
+        return instance.execute(command + ",event=" + event + ",interval=" + interval + "m,jstackdepth=" + depth + ",event=" + Events.LOCK + ",threads");
+    }
 }
