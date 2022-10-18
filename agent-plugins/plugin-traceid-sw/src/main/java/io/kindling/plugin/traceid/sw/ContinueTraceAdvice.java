@@ -17,6 +17,7 @@
 package io.kindling.plugin.traceid.sw;
 
 import org.apache.skywalking.apm.agent.core.context.ContextSnapshot;
+import org.apache.skywalking.apm.agent.core.context.TracingContext;
 
 import io.kindling.agent.api.AdviceConfig;
 import io.kindling.agent.api.AfterAdvice;
@@ -31,6 +32,7 @@ import io.kindling.agent.instrument.annotation.AdvicePointCut;
 )
 public class ContinueTraceAdvice implements AfterAdvice {
     private final AdviceConfig ADVICE_CONFIG;
+    private SwAdapter adapter;
 
     public ContinueTraceAdvice() {
         ADVICE_CONFIG = new AdviceConfig().enableArg0Param();
@@ -39,7 +41,10 @@ public class ContinueTraceAdvice implements AfterAdvice {
     public void after(JoinPoint joinPoint) {
         ContextSnapshot snapshot = (ContextSnapshot) joinPoint.getArg0();
         if (snapshot.isValid()) {
-            KindlingApi.enter(snapshot.getTraceId().getId());
+            if (adapter == null) {
+                adapter = SwAdapter.getAdapter(TracingContext.class);
+            }
+            KindlingApi.enter(adapter.getSnapShotTraceId(snapshot));
         }
     }
 

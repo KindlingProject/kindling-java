@@ -31,6 +31,7 @@ import io.kindling.agent.instrument.annotation.AdvicePointCut;
 )
 public class StopTraceAdvice implements AfterAdvice {
     private final AdviceConfig ADVICE_CONFIG;
+    private SwAdapter adapter;
 
     public StopTraceAdvice() {
         ADVICE_CONFIG = new AdviceConfig().enableThisParam().enableReturnObjectParam();
@@ -39,7 +40,10 @@ public class StopTraceAdvice implements AfterAdvice {
     public void after(JoinPoint joinPoint) {
         Boolean finish = (Boolean) joinPoint.getReturnObject();
         if (finish != null && finish) {
-            KindlingApi.exit(((TracingContext)joinPoint.getThis()).getReadablePrimaryTraceId());
+            if (adapter == null) {
+                adapter = SwAdapter.getAdapter(TracingContext.class);
+            }
+            KindlingApi.exit(adapter.getReadableTraceId((TracingContext) joinPoint.getThis()));
         }
     }
 

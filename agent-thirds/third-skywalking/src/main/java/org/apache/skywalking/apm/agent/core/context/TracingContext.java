@@ -28,6 +28,12 @@ public class TracingContext {
     private LinkedList<AbstractSpan> activeSpanStack = new LinkedList<AbstractSpan>();
     private volatile boolean running;
 
+    // 5.x ~ 7.x
+    public String getReadableGlobalTraceId() {
+        return getPrimaryTraceId().getId();
+    }
+
+    // 8.x
     public String getReadablePrimaryTraceId() {
         return getPrimaryTraceId().getId();
     }

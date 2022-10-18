@@ -24,6 +24,12 @@ public class ContextSnapshot {
     private int spanId;
     private String parentEndpoint;
 
+    // 5.x ~ 7.x
+    public DistributedTraceId getDistributedTraceId() {
+        return traceId;
+    }
+
+    // 8.x+
     public DistributedTraceId getTraceId() {
         return traceId;
     }

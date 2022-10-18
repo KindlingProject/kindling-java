@@ -26,4 +26,8 @@ public abstract class DistributedTraceId {
     public String getId() {
         return id;
     }
+
+    public String toString() {
+        return id;
+    }
 }
