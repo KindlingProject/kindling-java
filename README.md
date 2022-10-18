@@ -2,10 +2,6 @@
 Kindling-java is an attach agent to collect Java CPU / LOCK for probe which relies on async-profiler.
 
 ## HowTo Build
-* Build AsyncProfiler
-
-> make release
-
 * Build Kindling Java
 
 > mvn clean package
@@ -17,11 +13,19 @@ Kindling-java is an attach agent to collect Java CPU / LOCK for probe which reli
 $ cd agent-package/target
 $ unzip agent-package-1.0.0.zip
 $ cp -R agent-package <asyncProfiler Path>/agent
+```
 
-async-profiler
+* Build AsyncProfiler
+
+```
+$ make release
+$ tar -zxvf async-profiler-2.8.3-linux-x64.tar.gz
+
+async-profiler-2.8.3-linux-x64
 ├── agent
 │   ├── 1.0.0
-│   │   └── agent-core.jar
+│   │   ├── agent-core.jar
+│   │   └── plugin-traceid-sw.jar
 │   ├── agent-boot.jar
 │   └── version
 ├── build

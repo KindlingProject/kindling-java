@@ -19,7 +19,7 @@ package io.kindling.plugin.traceid.sw;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
 
 import io.kindling.agent.api.AdviceConfig;
-import io.kindling.agent.api.AfterAdvice;
+import io.kindling.agent.api.AroundAdvice;
 import io.kindling.agent.api.JoinPoint;
 import io.kindling.agent.api.KindlingApi;
 import io.kindling.agent.instrument.annotation.AdvicePointCut;
@@ -29,15 +29,31 @@ import io.kindling.agent.instrument.annotation.AdvicePointCut;
     matchMethods = "createEntrySpan",
     matchParams = "(java.lang.String,org.apache.skywalking.apm.agent.core.context.ContextCarrier)"
 )
-public class StartTraceAdvice implements AfterAdvice {
+public class StartTraceAdvice implements AroundAdvice {
     private final AdviceConfig ADVICE_CONFIG;
 
     public StartTraceAdvice() {
         ADVICE_CONFIG = new AdviceConfig();
     }
 
+    public void before(JoinPoint joinPoint) {
+        // Store isActive in arg0 before method.
+        joinPoint.setArg0(ContextManager.isActive());
+    }
+
     public void after(JoinPoint joinPoint) {
-        KindlingApi.enter(ContextManager.getGlobalTraceId());
+        boolean isActive = (Boolean) joinPoint.getArg0();
+        if (isActive == false) {
+            /**
+             * Case for Undertow.
+             * 
+             * => SWRunnable.run(44)->ContextManager.continued(329) =>
+             * SWRunnable.run(45)->XXXController.xxx()->ContextManager.createEntrySpan(105)
+             * (Ignore such case) <=
+             * SWRunnable.run(47)->ContextManager.stopSpan(181)
+             */
+            KindlingApi.enter(ContextManager.getGlobalTraceId());
+        }
     }
 
     public AdviceConfig getAdviceConfig() {

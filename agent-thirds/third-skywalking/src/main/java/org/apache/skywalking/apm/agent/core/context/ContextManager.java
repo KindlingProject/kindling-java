@@ -26,7 +26,7 @@ public class ContextManager {
         AbstractTracerContext context = CONTEXT.get();
         return context != null ? context.getReadablePrimaryTraceId() : EMPTY_TRACE_CONTEXT_ID;
     }
-    
+
     public static AbstractSpan createEntrySpan(String operationName, ContextCarrier carrier) {
         AbstractSpan span = null;
 //        AbstractTracerContext context;
@@ -42,5 +42,13 @@ public class ContextManager {
 //            span = context.createEntrySpan(operationName);
 //        }
         return span;
+    }
+
+    private static AbstractTracerContext get() {
+        return CONTEXT.get();
+    }
+
+    public static boolean isActive() {
+        return get() != null;
     }
 }
