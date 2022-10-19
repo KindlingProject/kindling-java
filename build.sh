@@ -23,18 +23,15 @@ if [ ! -d "${DIR}/build/" ]; then
 	mkdir build
 fi
 
-if [ ! -d "${PROFILER_PATH}" ]; then
+if [ ! -f "${PROFILER_PATH}/profiler.sh" ]; then
 	cd build
-	wget https://github.com/CloudDectective-Harmonycloud/async-profiler/archive/refs/heads/${PROFILER_BRANCH}.zip
-	unzip ${PROFILER_BRANCH}.zip
-	mv async-profiler-${PROFILER_BRANCH} async-profiler
-	rm -f ${PROFILER_BRANCH}.zip
+	git clone -b ${PROFILER_BRANCH} https://github.com/CloudDectective-Harmonycloud/async-profiler.git
 	cd ${DIR}
 fi
 
 if [ ! -d "${PROFILER_PATH}/agent" ]; then
 	# Build agent-package-xxx.zip
-	mvn clean package
+	mvn clean package -Dmaven.test.skip=true
 	
 	VERSION=$(cat agent-package/target/classes/version)
 	echo "Agent Version: ${VERSION}"
