@@ -32,7 +32,7 @@ public class AsyncProfilerEvent {
             flag |= EVENT_LOCK;
         }
         if (event.contains("traceid")) {
-            flag |= EVENT_LOCK;
+            flag |= EVENT_TRACEID;
         }
         this.flag = flag;
     }
