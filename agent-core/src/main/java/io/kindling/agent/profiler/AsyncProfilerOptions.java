@@ -26,10 +26,10 @@ public class AsyncProfilerOptions {
     private final int stackDepth;
     private final AsyncProfilerEvent event;
 
-    public AsyncProfilerOptions(Map<String, String> featureMap) {
+    public AsyncProfilerOptions(Map<String, String> featureMap, AsyncProfilerEvent event) {
         this.intervalMs = AttachOptions.getIntervalMs(featureMap);
         this.stackDepth = AttachOptions.getDepth(featureMap);
-        this.event = new AsyncProfilerEvent(AttachOptions.getEvent(featureMap));
+        this.event = event;
     }
 
     public long getIntervalMs() {

@@ -47,10 +47,9 @@ public class StartTraceAdvice implements AroundAdvice {
             /**
              * Case for Undertow.
              * 
-             * => SWRunnable.run(44)->ContextManager.continued(329) =>
-             * SWRunnable.run(45)->XXXController.xxx()->ContextManager.createEntrySpan(105)
-             * (Ignore such case) <=
-             * SWRunnable.run(47)->ContextManager.stopSpan(181)
+             * => SWRunnable.run(44)->ContextManager.continued(329)
+             *   => SWRunnable.run(45)->XXXController.xxx()->ContextManager.createEntrySpan(105) (Ignore such case)
+             * <= SWRunnable.run(47)->ContextManager.stopSpan(181)
              */
             KindlingApi.enter(ContextManager.getGlobalTraceId());
         }

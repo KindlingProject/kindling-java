@@ -25,6 +25,8 @@ import java.util.Map;
 import io.kindling.agent.instrument.ClassTransfromService;
 import io.kindling.agent.instrument.aspect.AopRegistryService;
 import io.kindling.agent.instrument.aspect.ScanService;
+import io.kindling.agent.profiler.AsyncProfilerEvent;
+import io.kindling.agent.util.AttachOptions;
 
 public class ServiceManagerImpl implements ServiceManager {
     private final List<Service> services;
@@ -33,8 +35,14 @@ public class ServiceManagerImpl implements ServiceManager {
         this.services = new ArrayList<Service>();
         this.services.add(new ScanService(agentJar)); // Scan @AdvicePointCut
         this.services.add(new AopRegistryService()); // Registry Advice
-        this.services.add(new ClassTransfromService(instrumentation, attach)); // ClassTransform
-        this.services.add(new AsyncProfilerService(featureMap, agentJar)); // AsyncProfiler
+
+        AsyncProfilerEvent event = new AsyncProfilerEvent(AttachOptions.getEvent(featureMap));
+        if (event.enableTraceId()) {
+            this.services.add(new ClassTransfromService(instrumentation, attach)); // ClassTransform
+        }
+        if (event.enableAsyncEvent()) {
+            this.services.add(new AsyncProfilerService(featureMap, event, agentJar)); // AsyncProfiler
+        }
     }
 
     public synchronized void start() {

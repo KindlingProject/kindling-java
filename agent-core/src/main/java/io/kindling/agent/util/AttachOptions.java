@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public enum AttachOptions {
-    Event("kindling_event", "event", "cpu,lock"),
+    Event("kindling_event", "event", "cpu,lock,traceid"),
     Interval("kindling_interval", "interval", "10000000"),
     Depth("kindling_depth", "jstackdepth", "20"),
     LogFile("kindling_log", "log", "/tmp/kindling/agent.log"),
@@ -51,7 +51,7 @@ public enum AttachOptions {
     }
 
     public static String getEvent(Map<String, String> featureMap) {
-        return Event.getOptionValue(featureMap);
+        return Event.getOptionValue(featureMap).toLowerCase();
     }
 
     public static long getIntervalMs(Map<String, String> featureMap) {

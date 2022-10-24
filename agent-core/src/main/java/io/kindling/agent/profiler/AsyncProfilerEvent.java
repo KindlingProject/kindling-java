@@ -19,6 +19,7 @@ package io.kindling.agent.profiler;
 public class AsyncProfilerEvent {
     private static final int EVENT_CPU = 1;
     private static final int EVENT_LOCK = 2;
+    private static final int EVENT_TRACEID = 4;
 
     private final int flag;
 
@@ -30,11 +31,14 @@ public class AsyncProfilerEvent {
         if (event.contains("lock")) {
             flag |= EVENT_LOCK;
         }
+        if (event.contains("traceid")) {
+            flag |= EVENT_LOCK;
+        }
         this.flag = flag;
     }
 
-    public boolean hasEvent() {
-        return flag > 0;
+    public boolean enableAsyncEvent() {
+        return enableCpu() || enableLock();
     }
 
     public boolean enableCpu() {
@@ -43,5 +47,9 @@ public class AsyncProfilerEvent {
 
     public boolean enableLock() {
         return (flag & EVENT_LOCK) > 0;
+    }
+
+    public boolean enableTraceId() {
+        return (flag & EVENT_TRACEID) > 0;
     }
 }

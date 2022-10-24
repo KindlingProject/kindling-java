@@ -31,19 +31,18 @@ public class Profiler {
     private ScheduledExecutorService executor;
     private AsyncProfilerStarter starter;
 
-    public Profiler(Map<String, String> featureMap, String libPath) {
-        this.options = new AsyncProfilerOptions(featureMap);
-        if (options.getEvent().hasEvent()) {
-            this.instance = libPath == null ? null : AsyncProfiler.getInstance(libPath);
-            if (this.instance == null) {
-                ServiceFactory.LOG.error("Fail to Init Async Profiler");
-            }
+    public Profiler(Map<String, String> featureMap, AsyncProfilerEvent event, String libPath) {
+        this.options = new AsyncProfilerOptions(featureMap, event);
+        this.instance = libPath == null ? null : AsyncProfiler.getInstance(libPath);
+        if (this.instance == null) {
+            ServiceFactory.LOG.error("Fail to Init Async Profiler");
+        } else {
             if (options.enableCollectCpu()) {
                 this.executor = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("Kindling AsyncProfiler", true));
+                this.starter = AsyncProfilerStarter.UNKNOWN_CPU;
+            } else {
+                this.starter = AsyncProfilerStarter.NO_CPU;
             }
-            this.starter = options.enableCollectCpu() ? AsyncProfilerStarter.UNKNOWN_CPU : AsyncProfilerStarter.NO_CPU;
-        } else {
-            this.instance = null;
         }
     }
 
