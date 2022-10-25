@@ -15,38 +15,47 @@
 
 set -eu
 
-PROFILER_BRANCH=get-cpu-lock-event-sw
-DIR=$(cd `dirname $0`; pwd)
-PROFILER_PATH=${DIR}/build/async-profiler
+export PROFILER_BRANCH=kindling
+export DIR=$(cd `dirname $0`; pwd)
 
-if [ ! -d "${DIR}/build/" ]; then
-	mkdir build
+run_docker() {
+  ARCH=$1
+  case $ARCH in
+    linux-x64)
+      IMAGE="debian:latest"
+      PLATFORM="linux/amd64"
+      ;;
+    linux-x64-musl)
+      IMAGE="alpine"
+      PLATFORM="linux/amd64"
+      ;;
+    linux-arm64)
+      IMAGE="arm64v8/alpine"
+      PLATFORM="linux/arm64"
+      ;;
+    *)
+      echo "Only linux-x64, linux-x64-musl and linux-arm64 are valid arch options."
+      exit 0
+      ;;
+  esac
+
+  # Build Image.
+  TAG="kindling-java-build:${ARCH}"
+  if [ -z "$(docker images | grep kindling-java-build | grep ${ARCH})" ];then
+    docker build --build-arg IMAGE=${IMAGE} -t ${TAG} --platform ${PLATFORM} ${DIR}/docker
+  fi
+
+  # Start Docker Build
+  docker run --rm -it --platform ${PLATFORM} -v ${DIR}:/data/src/kindling-java -v ${DIR}/docker/build.sh:/data/script/build.sh -v ${DIR}/docker/build_in_docker.sh:/data/script/build_in_docker.sh ${TAG} bash -eux /data/script/build_in_docker.sh ${PROFILER_BRANCH}
+}
+
+# Build Local             ./build.sh
+# Build Docker(X64)       ./build.sh linux-x64
+# Build Docker(X64-MUSL)  ./build.sh linux-x64-musl
+# Build Docker(ARM64)     ./build.sh linux-arm64
+if [ $# == 0 ]; then
+  . ${DIR}/docker/build.sh
+  buildLocal ${DIR} ${PROFILER_BRANCH}
+else
+  run_docker $1
 fi
-
-if [ ! -f "${PROFILER_PATH}/profiler.sh" ]; then
-	cd build
-	git clone -b ${PROFILER_BRANCH} https://github.com/CloudDectective-Harmonycloud/async-profiler.git
-	cd ${DIR}
-fi
-
-if [ ! -d "${PROFILER_PATH}/agent" ]; then
-	# Build agent-package-xxx.zip
-	mvn clean package -Dmaven.test.skip=true
-	
-	VERSION=$(cat agent-package/target/classes/version)
-	echo "Agent Version: ${VERSION}"
-	
-	# Copy Agent To AsyncProfiler
-	cd agent-package/target
-	unzip agent-package-${VERSION}.zip
-	cp -Rf agent-package ${PROFILER_PATH}/agent
-fi
-
-
-cd ${PROFILER_PATH}
-make release
-rm -rf agent
-rm -rf build
-
-# Copy binary to build folder.
-mv async-profiler-*.* ${DIR}/build
