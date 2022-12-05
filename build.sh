@@ -22,7 +22,7 @@ run_docker() {
   ARCH=$1
   case $ARCH in
     linux-x64)
-      IMAGE="debian:latest"
+      IMAGE="centos:centos7"
       PLATFORM="linux/amd64"
       ;;
     linux-x64-musl)
