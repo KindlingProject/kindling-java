@@ -17,5 +17,5 @@
 package org.apache.skywalking.apm.agent.core.context.trace;
 
 public interface AbstractSpan {
-
+    String getOperationName();
 }

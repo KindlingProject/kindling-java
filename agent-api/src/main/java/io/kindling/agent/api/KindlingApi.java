@@ -19,8 +19,15 @@ package io.kindling.agent.api;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class KindlingApi {
+    private static final int TYPE_ENTRY_ENTER = 1;
+    private static final int TYPE_ENTRY_EXIT = 0;
+
+    private static final List<String> IGNORE_TRACES = Arrays.asList("Ignored_Trace");
+
     private static FileOutputStream out;
 
     static {
@@ -41,20 +48,37 @@ public class KindlingApi {
         if (out == null) {
             return;
         }
-        recordTraceId(traceId, true);
+        recordTraceId(traceId, TYPE_ENTRY_ENTER);
     }
 
     public static void exit(String traceId) {
         if (out == null) {
             return;
         }
-        recordTraceId(traceId, false);
+        recordTraceId(traceId, TYPE_ENTRY_EXIT);
     }
 
-    private static void recordTraceId(String traceId, boolean enter) {
+    private static void recordTraceId(String traceId, int type) {
+        if (IGNORE_TRACES.contains(traceId)) {
+            return;
+        }
         synchronized (out) {
             try {
-                out.write(String.format("kd-txid@%s!%d!", traceId, enter ? 1 : 0).getBytes());
+                out.write(String.format("kd-txid@%s!%d!", traceId, type).getBytes());
+                out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void recordSpan(String traceId, String spanName, long duration) {
+        if (out == null) {
+            return;
+        }
+        synchronized (out) {
+            try {
+                out.write(String.format("kd-span@%d!%s!%s!", duration, spanName, traceId).getBytes());
                 out.flush();
             } catch (IOException e) {
                 e.printStackTrace();

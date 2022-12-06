@@ -3,7 +3,7 @@ Kindling-java is an attach agent to collect Java CPU / LOCK for probe which reli
 
 Features
 * [Event] Collect datas by events specified by event argument[cpu / lock / traceid].
-* [Plugins] Enhance SkyWalking Agent and print traceId into /dev/null.
+* [Plugins] Enhance SkyWalking Agent and print traceId and span into /dev/null.
 
 ## Build Kindling Java & AsyncProfiler
 ```
@@ -12,9 +12,10 @@ $ ./build.sh
 
 async-profiler-2.8.3-linux-x64
 ├── agent
-│   ├── 1.0.0
+│   ├── 1.0.1
 │   │   ├── agent-core.jar
-│   │   └── plugin-traceid-sw.jar
+│   │   ├── plugin-traceid-sw.jar
+│   │   └── plugin-span-sw.jar
 │   ├── agent-boot.jar
 │   └── version
 ├── build
