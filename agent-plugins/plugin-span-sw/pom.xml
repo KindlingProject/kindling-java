@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <!--
  Copyright 2022 The Kindling Authors
 
@@ -22,8 +21,8 @@
 		<artifactId>agent-plugins</artifactId>
 		<version>1.0.1</version>
 	</parent>
-	<artifactId>plugin-traceid-sw</artifactId>
-	<name>Kindling TraceId Plugin ---- Skywalking</name>
+	<artifactId>plugin-span-sw</artifactId>
+	<name>Kindling Span Plugin ---- Skywalking</name>
 
 	<dependencies>
 		<dependency>

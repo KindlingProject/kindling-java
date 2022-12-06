@@ -38,6 +38,11 @@
 			<outputDirectory>${project.version}</outputDirectory>
 		</file>
 		<file>
+			<source>${project.basedir}/../agent-plugins/plugin-span-sw/target/plugin-span-sw-${project.version}.jar</source>
+			<destName>plugin-span-sw.jar</destName>
+			<outputDirectory>${project.version}</outputDirectory>
+		</file>
+		<file>
 			<source>${project.basedir}/../agent-boot/target/agent-boot-${project.version}.jar</source>
 			<destName>agent-boot.jar</destName>
 		</file>
