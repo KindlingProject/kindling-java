@@ -28,5 +28,6 @@
 	<modules>
 		<module>plugin-traceid-sw</module>
 		<module>plugin-span-sw</module>
+		<module>plugin-traceid-pp</module>
 	</modules>
 </project>

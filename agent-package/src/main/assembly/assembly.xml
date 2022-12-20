@@ -43,6 +43,11 @@
 			<outputDirectory>${project.version}</outputDirectory>
 		</file>
 		<file>
+			<source>${project.basedir}/../agent-plugins/plugin-traceid-pp/target/plugin-traceid-pp-${project.version}.jar</source>
+			<destName>plugin-traceid-pp.jar</destName>
+			<outputDirectory>${project.version}</outputDirectory>
+		</file>
+		<file>
 			<source>${project.basedir}/../agent-boot/target/agent-boot-${project.version}.jar</source>
 			<destName>agent-boot.jar</destName>
 		</file>

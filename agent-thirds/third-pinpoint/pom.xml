@@ -18,15 +18,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.kindling</groupId>
-		<artifactId>kindling-java</artifactId>
+		<artifactId>agent-thirds</artifactId>
 		<version>1.0.1</version>
 	</parent>
-	<artifactId>agent-thirds</artifactId>
-	<packaging>pom</packaging>
-	<name>Kindling Third Libs</name>
 
-	<modules>
-		<module>third-skywalking</module>
-		<module>third-pinpoint</module>
-	</modules>
+	<artifactId>third-pinpoint</artifactId>
+	<name>Kindling Third Lib --- Pinpoint</name>
 </project>

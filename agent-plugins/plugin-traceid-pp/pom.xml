@@ -18,15 +18,30 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.kindling</groupId>
-		<artifactId>kindling-java</artifactId>
+		<artifactId>agent-plugins</artifactId>
 		<version>1.0.1</version>
 	</parent>
-	<artifactId>agent-thirds</artifactId>
-	<packaging>pom</packaging>
-	<name>Kindling Third Libs</name>
+	<artifactId>plugin-traceid-pp</artifactId>
+	<name>Kindling TraceId Plugin ---- Pinpoint</name>
 
-	<modules>
-		<module>third-skywalking</module>
-		<module>third-pinpoint</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>io.kindling</groupId>
+			<artifactId>agent-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.kindling</groupId>
+			<artifactId>agent-core</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.kindling</groupId>
+			<artifactId>third-pinpoint</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>
