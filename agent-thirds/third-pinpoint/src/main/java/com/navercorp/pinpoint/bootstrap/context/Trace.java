@@ -22,4 +22,6 @@ package com.navercorp.pinpoint.bootstrap.context;
  */
 public interface Trace {
     TraceId getTraceId();
+
+    boolean canSampled();
 }

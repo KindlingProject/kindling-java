@@ -43,10 +43,9 @@ public class StartTraceAdvice implements AfterAdvice {
 
     public void after(JoinPoint joinPoint) {
         Trace trace = (Trace) joinPoint.getReturnObject();
-        if (trace == null || trace.getClass().getSimpleName().startsWith("Disable")) {
-            return;
+        if (trace != null && trace.canSampled()) {
+            KindlingApi.enter(trace.getTraceId().getTransactionId());
         }
-        KindlingApi.enter(trace.getTraceId().getTransactionId());
     }
 
     public AdviceConfig getAdviceConfig() {
