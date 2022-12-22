@@ -72,13 +72,17 @@ public class KindlingApi {
         }
     }
 
-    public static void recordSpan(String traceId, String spanName, long duration) {
+    /**
+     * v0 kd-span@durationNs!spanName!traceId!
+     * => v1 kd-span@version!startTimeNs!spanName!traceId!
+     */
+    public static void recordSpan(String traceId, String spanName, long startTimeMs) {
         if (out == null) {
             return;
         }
         synchronized (out) {
             try {
-                out.write(String.format("kd-span@%d!%s!%s!", duration, spanName, traceId).getBytes());
+                out.write(String.format("kd-span@%d!%d!%s!%s!", 1, startTimeMs * 1000000L, spanName, traceId).getBytes());
                 out.flush();
             } catch (IOException e) {
                 e.printStackTrace();

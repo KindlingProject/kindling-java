@@ -48,15 +48,13 @@ public class LogSpanAdvice implements BeforeAdvice {
 
         String apiName = PpApiCache.getApiName(spanEvent.getApiId());
         if (apiName == null) {
-            System.err.println("[Not Found] ApiId: " + spanEvent.getApiId());
             return;
         }
-            
-        // ms -> ns.
-        long duration = spanEvent.getElapsedTime() * 1000000L;
-
+        if (spanEvent.getStartTime() == 0L) {
+            return;
+        }
         DefaultTrace trace = ((DefaultTrace) joinPoint.getThis());
-        KindlingApi.recordSpan(trace.getTraceId().getTransactionId(), apiName, duration);
+        KindlingApi.recordSpan(trace.getTraceId().getTransactionId(), apiName, spanEvent.getStartTime());
     }
 
     public AdviceConfig getAdviceConfig() {

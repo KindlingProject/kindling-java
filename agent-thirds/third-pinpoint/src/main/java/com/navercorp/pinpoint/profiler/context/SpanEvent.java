@@ -23,8 +23,13 @@ package com.navercorp.pinpoint.profiler.context;
  * @author emeroad
  */
 public class SpanEvent {
+    private long startTime;
     private int elapsedTime;
     private int apiId; // optional
+
+    public long getStartTime() {
+        return startTime;
+    }
 
     public int getElapsedTime() {
         return elapsedTime;
