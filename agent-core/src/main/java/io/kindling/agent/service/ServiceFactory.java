@@ -19,6 +19,7 @@ package io.kindling.agent.service;
 public class ServiceFactory {
     private static volatile ServiceManager SERVICE_MANAGER = ServiceManager.NO_OP;
     public static volatile ILogService LOG = ILogService.NO_OP;
+    public static volatile ICacheService CACHE = ICacheService.NO_OP;
 
     public static boolean isAgentActive() {
         return ServiceManager.NO_OP.equals(SERVICE_MANAGER) == false;
@@ -37,8 +38,16 @@ public class ServiceFactory {
         }
     }
 
+    public static void setCacheService(ICacheService service) {
+        if (service != null) {
+            CACHE = service;
+        }
+    }
+
     public static void stopService() {
         SERVICE_MANAGER.stop();
         SERVICE_MANAGER = ServiceManager.NO_OP;
+        CACHE.cleanCache();
+        CACHE = ICacheService.NO_OP;
     }
 }

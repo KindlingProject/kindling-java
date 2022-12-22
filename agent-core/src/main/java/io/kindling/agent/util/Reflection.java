@@ -16,7 +16,9 @@
 
 package io.kindling.agent.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class Reflection {
     public static boolean hasMethod(Class<?> clazz, String methodName) {
@@ -32,5 +34,35 @@ public class Reflection {
             }
         }
         return false;
+    }
+
+    public static Object getField(Object obj, String fieldName) {
+        Field field = getAccessibleField(obj.getClass(), fieldName);
+        if (field == null) {
+            return null;
+        }
+        try {
+            return field.get(obj);
+        } catch (Throwable cause) {
+            return null;
+        }
+    }
+
+    public static Field getAccessibleField(Class<?> clazz, String fieldName) {
+        for (Class<?> searchType = clazz; searchType != Object.class; searchType = searchType.getSuperclass()) {
+            try {
+                Field field = searchType.getDeclaredField(fieldName);
+                makeAccessible(field);
+                return field;
+            } catch (Exception cause) {
+            }
+        }
+        return null;
+    }
+
+    private static void makeAccessible(Field field) {
+        if (field.isAccessible() == false && (!Modifier.isPublic(field.getModifiers()) || !Modifier.isPublic(field.getDeclaringClass().getModifiers()))) {
+            field.setAccessible(true);
+        }
     }
 }

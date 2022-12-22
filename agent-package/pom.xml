@@ -46,12 +46,6 @@
 			<artifactId>agent-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>io.kindling</groupId>
-			<artifactId>plugin-traceid-sw</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>agent-package</finalName>
