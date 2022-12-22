@@ -18,11 +18,12 @@ package org.apache.skywalking.apm.agent.core.context.trace;
 
 import org.apache.skywalking.apm.agent.core.context.TracingContext;
 
-public class AbstractTracingSpan {
+public abstract class AbstractTracingSpan implements AbstractSpan {
     protected int spanId;
     protected int parentSpanId;
     protected String operationName;
     protected final TracingContext owner;
+    protected long startTime;
     protected long endTime;
 
     protected AbstractTracingSpan(int spanId, int parentSpanId, String operationName, TracingContext owner) {
@@ -32,6 +33,16 @@ public class AbstractTracingSpan {
         this.owner = owner;
     }
     
+    public AbstractTracingSpan start() {
+        this.startTime = System.currentTimeMillis();
+        return this;
+    }
+
+    public AbstractSpan start(long startTime) {
+        this.startTime = startTime;
+        return this;
+    }
+
     public boolean finish(TraceSegment owner) {
         this.endTime = System.currentTimeMillis();
         owner.archive(this);

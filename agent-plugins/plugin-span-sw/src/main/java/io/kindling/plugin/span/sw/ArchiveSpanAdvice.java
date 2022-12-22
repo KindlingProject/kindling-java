@@ -17,7 +17,6 @@
 package io.kindling.plugin.span.sw;
 
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
-import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractTracingSpan;
 
 import io.kindling.agent.api.AdviceConfig;
@@ -30,31 +29,33 @@ import io.kindling.agent.util.Reflection;
 import java.lang.reflect.Field;
 
 @AdvicePointCut(
-    matchClasses = "org.apache.skywalking.apm.agent.core.context.TracingContext",
-    matchMethods = "stopSpan",
-    matchParams = "(org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan)"
+    matchClasses = "org.apache.skywalking.apm.agent.core.context.trace.TraceSegment",
+    matchMethods = "archive",
+    matchParams = "(org.apache.skywalking.apm.agent.core.context.trace.AbstractTracingSpan)"
 )
-public class StopSpanAdvice implements AfterAdvice {
+public class ArchiveSpanAdvice implements AfterAdvice {
     private final AdviceConfig ADVICE_CONFIG;
     private volatile Field startTimeField;
 
-    public StopSpanAdvice() {
+    public ArchiveSpanAdvice() {
         ADVICE_CONFIG = new AdviceConfig().enableArg0Param();
     }
 
     public void after(JoinPoint joinPoint) {
-        AbstractSpan span = (AbstractSpan) joinPoint.getArg0();
+        AbstractTracingSpan span = (AbstractTracingSpan) joinPoint.getArg0();
         // Ignore NoopSpan
-        if (span != null && "".equals(span.getOperationName()) == false) {
-            try {
-                if (startTimeField == null) {
-                    // Cache Field
-                    startTimeField = Reflection.getAccessibleField(AbstractTracingSpan.class, "startTime");
-                }
-                long startTime = (Long) startTimeField.get(span);
-                KindlingApi.recordSpan(ContextManager.getGlobalTraceId(), span.getOperationName(), startTime);
-            } catch (Throwable cause) {
+        if (span == null) {
+            return;
+        }
+        try {
+            if (startTimeField == null) {
+                // Cache Field
+                startTimeField = Reflection.getAccessibleField(AbstractTracingSpan.class, "startTime");
             }
+            long startTime = (Long) startTimeField.get(span);
+            KindlingApi.recordSpan(ContextManager.getGlobalTraceId(), span.getOperationName(), startTime);
+        } catch (Throwable cause) {
+            cause.printStackTrace();
         }
     }
 
