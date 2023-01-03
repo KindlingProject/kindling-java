@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>io.kindling</groupId>
 		<artifactId>kindling-java</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 	</parent>
 	<artifactId>agent-package</artifactId>
 	<name>Kindling Agent Package</name>
@@ -48,7 +48,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>agent-package</finalName>
+		<finalName>kindling-java</finalName>
 		<resources>
             <resource>
                 <directory>src/main/resources</directory>
