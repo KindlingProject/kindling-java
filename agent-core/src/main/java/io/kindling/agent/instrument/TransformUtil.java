@@ -26,9 +26,10 @@ import io.kindling.agent.util.Streams;
 
 public class TransformUtil {
     static final String[] ignoreClassPatterns = {
-            "io/kindling/agent/"
-            , "io/kindling/extension/"
-            , "io/kindling/a/a/"
+            "io/kindling/"
+            , "org/vlis/apm/agent/"
+            , "org/vlis/apm/extension/"
+            , "org/vlis/apm/a/a/"
             , "sun/reflect/"
             , "com/sun/"
             , "javax/"

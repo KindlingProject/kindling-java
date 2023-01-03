@@ -28,7 +28,7 @@
 			<fileMode>0666</fileMode>
 		</file>
 		<file>
-			<source>${project.basedir}/target/agent-package.jar</source>
+			<source>${project.basedir}/target/kindling-java.jar</source>
 			<destName>agent-core.jar</destName>
 			<outputDirectory>${project.version}</outputDirectory>
 		</file>
