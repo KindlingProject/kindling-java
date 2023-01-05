@@ -21,6 +21,7 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 import io.kindling.agent.api.ClassStructure;
+import io.kindling.agent.api.SystemPropertyKey;
 import io.kindling.agent.deps.org.objectweb.asm.ClassReader;
 import io.kindling.agent.instrument.aspect.matcher.structure.ClassStructureFactory;
 import io.kindling.agent.instrument.aspect.pointcut.AspectRegistry;
@@ -51,6 +52,7 @@ public class AopClassTransformer implements ClassFileTransformer {
                 isTransformed = result.isModified();
                 if (isTransformed) {
                     data = result.getResult();
+                    SystemPropertyKey.markApmDetected();
                 }
             }
             if (isTransformed == false) {

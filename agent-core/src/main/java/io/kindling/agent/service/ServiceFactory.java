@@ -16,10 +16,16 @@
 
 package io.kindling.agent.service;
 
+import java.lang.instrument.Instrumentation;
+import java.util.Map;
+
+import io.kindling.agent.api.SystemPropertyKey;
+
 public class ServiceFactory {
     private static volatile ServiceManager SERVICE_MANAGER = ServiceManager.NO_OP;
     public static volatile ILogService LOG = ILogService.NO_OP;
     public static volatile ICacheService CACHE = ICacheService.NO_OP;
+    public static volatile IDetachAgentService DETACH_AGENT = IDetachAgentService.NO_OP;
 
     public static boolean isAgentActive() {
         return ServiceManager.NO_OP.equals(SERVICE_MANAGER) == false;
@@ -29,6 +35,7 @@ public class ServiceFactory {
         if (serviceManager != null) {
             SERVICE_MANAGER = serviceManager;
             SERVICE_MANAGER.start();
+            SystemPropertyKey.markKindlingAttached();
         }
     }
 
@@ -38,16 +45,31 @@ public class ServiceFactory {
         }
     }
 
+    public static void setDetachAgentService(IDetachAgentService service) {
+        if (service != null) {
+            DETACH_AGENT = service;
+        }
+    }
+
+    public static void registryAgent(String className, String methodName) {
+        DETACH_AGENT.registryAgent(className, methodName);
+    }
+
     public static void setCacheService(ICacheService service) {
         if (service != null) {
             CACHE = service;
         }
     }
 
-    public static void stopService() {
+    public static void stopService(Map<String, String> featureMap, Instrumentation inst) {
+        DETACH_AGENT.detachAgents(featureMap, inst);
+        DETACH_AGENT = IDetachAgentService.NO_OP;
+
         SERVICE_MANAGER.stop();
         SERVICE_MANAGER = ServiceManager.NO_OP;
         CACHE.cleanCache();
         CACHE = ICacheService.NO_OP;
+
+        SystemPropertyKey.markKindlingDetached();
     }
 }

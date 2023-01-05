@@ -22,6 +22,7 @@ import java.util.Map;
 
 import io.kindling.agent.api.AgentType;
 import io.kindling.agent.service.CacheService;
+import io.kindling.agent.service.DetachAgentService;
 import io.kindling.agent.service.LogService;
 import io.kindling.agent.service.ServiceFactory;
 import io.kindling.agent.service.ServiceManagerImpl;
@@ -32,7 +33,7 @@ public class KindlingAgent {
         AgentType agentType = AgentType.getAgentType(featureMap);
         if (AgentType.Detach.equals(agentType)) {
             if (ServiceFactory.isAgentActive()) {
-                ServiceFactory.stopService();
+                ServiceFactory.stopService(featureMap, instrumentation);
             }
             return;
         }
@@ -41,6 +42,7 @@ public class KindlingAgent {
         boolean attach = AgentType.Attach.equals(agentType);
         ServiceFactory.setLogService(new LogService(AttachOptions.getLogFile(featureMap)));
         ServiceFactory.setCacheService(new CacheService());
+        ServiceFactory.setDetachAgentService(new DetachAgentService());
         ServiceFactory.setServiceManager(new ServiceManagerImpl(featureMap, attach, agentJarFile, instrumentation));
         if (attach) {
             ServiceFactory.setLogService(new LogService(AttachOptions.getDefaultLogFile()));
