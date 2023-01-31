@@ -62,13 +62,11 @@ public class KindlingApi {
         if (IGNORE_TRACES.contains(traceId)) {
             return;
         }
-        synchronized (out) {
-            try {
-                out.write(String.format("kd-txid@%s!%d!", traceId, type).getBytes());
-                out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            out.write(String.format("kd-txid@%s!%d!", traceId, type).getBytes());
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -80,13 +78,11 @@ public class KindlingApi {
         if (out == null) {
             return;
         }
-        synchronized (out) {
-            try {
-                out.write(String.format("kd-span@%d!%d!%s!%s!", 1, startTimeMs * 1000000L, spanName, traceId).getBytes());
-                out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            out.write(String.format("kd-span@%d!%d!%s!%s!", 1, startTimeMs * 1000000L, spanName, traceId).getBytes());
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
