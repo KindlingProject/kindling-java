@@ -17,18 +17,13 @@
 package io.kindling.agent.profiler;
 
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import io.kindling.agent.deps.one.profiler.AsyncProfiler;
 import io.kindling.agent.service.ServiceFactory;
-import io.kindling.agent.util.DefaultThreadFactory;
 
 public class Profiler {
     private final AsyncProfilerOptions options;
     private final AsyncProfiler instance;
-    private ScheduledExecutorService executor;
     private AsyncProfilerStarter starter;
 
     public Profiler(Map<String, String> featureMap, AsyncProfilerEvent event, String libPath) {
@@ -38,7 +33,6 @@ public class Profiler {
             ServiceFactory.LOG.error("Fail to Init Async Profiler");
         } else {
             if (options.enableCollectCpu()) {
-                this.executor = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("Kindling AsyncProfiler", true));
                 this.starter = AsyncProfilerStarter.UNKNOWN_CPU;
             } else {
                 this.starter = AsyncProfilerStarter.NO_CPU;
@@ -51,17 +45,6 @@ public class Profiler {
             return;
         }
         this.starter.start(this.instance, this.options);
-        if (executor != null) {
-            executor.scheduleAtFixedRate(new Runnable() {
-                public void run() {
-                    try {
-                        dump();
-                    } catch (Throwable cause) {
-                        cause.printStackTrace();
-                    }
-                }
-            }, options.getIntervalMs(), options.getIntervalMs(), TimeUnit.MILLISECONDS);
-        }
     }
 
     public synchronized void stop() throws Exception {
@@ -69,13 +52,6 @@ public class Profiler {
             return;
         }
 
-        if (executor != null) {
-            executor.shutdown();
-        }
         this.instance.stop();
-    }
-
-    final synchronized void dump() throws Exception {
-        this.instance.execute("print");
     }
 }
