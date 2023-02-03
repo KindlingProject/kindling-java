@@ -8,8 +8,8 @@ Features
 
 ## Build Kindling Java
 ```
-# Binary will be built in agent-package/target/kindling-java-${version}.zip
-$ ./build.sh
+# Binary will be built in agent-package/target/kindling-java-${version}.tar.gz
+$ mvn clean package -Dmaven.test.skip=true
 
 kindling-java
 ├── 1.0.2
@@ -27,8 +27,13 @@ kindling-java
 git clone -b kindling git@github.com:KindlingProject/async-profiler.git
 cd async-profiler
 ./build.sh
-tar -zxvf async-profiler-2.8.3-linux-x64.tar.gz
-cd async-profiler-2.8.3-linux-x64
+
+# Copy Kindling Java into async-profiler/agent folder
+tar -zxvf async-profiler-${version}-linux-x64.tar.gz
+mkdir -p async-profiler/agent
+tar -zxvf 
+mv kindling-java -zxvf $KINDLING_JAVA_FOLDER/agent-package/target/kindling-java-${version}.tar.gz -C async-profiler/agent/
+cd async-profiler  
 ```
 
 We also support build in container using following command.
@@ -58,7 +63,7 @@ Eg.
 > ./profiler.sh stop $pid
 
 ## How it works
-* Jattach copy the agent and libasyncprofiler.so into container.
+* Jcopy copy the agent and libasyncprofiler.so into container.
 * Jattach attach agent into application.
 * Agent start asyncProfiler by call asyncProfielr API.
     * Load libasyncprofiler.so
