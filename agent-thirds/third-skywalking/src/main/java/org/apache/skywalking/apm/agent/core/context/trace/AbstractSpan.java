@@ -17,5 +17,17 @@
 package org.apache.skywalking.apm.agent.core.context.trace;
 
 public interface AbstractSpan {
+    AbstractSpan setLayer(SpanLayer layer);
+
+    /**
+     * @return true if the actual span is an entry span.
+     */
+    boolean isEntry();
+
+    /**
+     * @return true if the actual span is an exit span.
+     */
+    boolean isExit();
+
     String getOperationName();
 }

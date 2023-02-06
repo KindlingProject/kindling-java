@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>io.kindling</groupId>
 		<artifactId>kindling-java</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	<artifactId>agent-package</artifactId>
 	<name>Kindling Agent Package</name>

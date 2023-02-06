@@ -16,21 +16,24 @@
 
 package io.kindling.agent.instrument.aspect.matcher;
 
+import io.kindling.agent.api.MethodModifier;
 import io.kindling.agent.instrument.aspect.matcher.method.MethodNameFactory;
 import io.kindling.agent.instrument.aspect.matcher.method.MethodNameMatcher;
 import io.kindling.agent.instrument.aspect.matcher.method.MethodParamsFactory;
 import io.kindling.agent.instrument.aspect.matcher.method.MethodParamsMatcher;
 
 public class AnnotationMethodMatcher {
+    private final MethodModifier matchModifier;
     private final MethodNameMatcher methodNameMatcher;
     private final MethodParamsMatcher methodParamsMatcher;
 
-    public AnnotationMethodMatcher(String matchMethod, String matchParam) {
+    public AnnotationMethodMatcher(MethodModifier matchModifier, String matchMethod, String matchParam) {
+        this.matchModifier = matchModifier;
         this.methodNameMatcher = MethodNameFactory.createMethodNameMatcher(matchMethod);
         this.methodParamsMatcher = MethodParamsFactory.createMethodParamsMatcher(matchParam);
     }
 
-    public boolean matchMethod(String methodName, String[] methodParams) {
-        return methodNameMatcher.isMatch(methodName) && methodParamsMatcher.isMatch(methodParams);
+    public boolean matchMethod(int methodAccess, String methodName, String[] methodParams) {
+        return methodNameMatcher.isMatch(methodName) && methodParamsMatcher.isMatch(methodParams) && matchModifier.isMatch(methodAccess);
     }
 }

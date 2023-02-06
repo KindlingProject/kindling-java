@@ -27,6 +27,8 @@ public class KindlingApi {
     private static final int TYPE_ENTRY_EXIT = 0;
 
     private static final List<String> IGNORE_TRACES = Arrays.asList("Ignored_Trace");
+    private static final String PROTOCOL_HTTP = "http";
+    private static final String PROTOCOL_RPC = "rpc";
 
     private static FileOutputStream out;
 
@@ -64,6 +66,32 @@ public class KindlingApi {
         }
         try {
             out.write(String.format("kd-txid@%s!%d!", traceId, type).getBytes());
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void startHttp(String traceId, String endpoint, String apmType) {
+        if (out == null) {
+            return;
+        }
+        recordProtcolEndpoint(traceId, PROTOCOL_HTTP, endpoint, apmType);
+    }
+
+    public static void startRpc(String traceId, String endpoint, String apmType) {
+        if (out == null) {
+            return;
+        }
+        recordProtcolEndpoint(traceId, PROTOCOL_RPC, endpoint, apmType);
+    }
+
+    private static void recordProtcolEndpoint(String traceId, String protocol, String endpoint, String apmType) {
+        if (IGNORE_TRACES.contains(traceId)) {
+            return;
+        }
+        try {
+            out.write(String.format("kd-txid@%s!%d!%s!%s!%s!", traceId, TYPE_ENTRY_ENTER, protocol, endpoint == null ? "" : endpoint, apmType).getBytes());
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.kindling.agent.api.ClassStructure;
+import io.kindling.agent.api.MethodModifier;
 import io.kindling.agent.api.MethodSignature;
 
 public class MultiAnnotationClassMatcher implements AnnotationClassMatcher {
@@ -31,13 +32,13 @@ public class MultiAnnotationClassMatcher implements AnnotationClassMatcher {
         this.annotationClassMatchers.add(two);
     }
 
-    public AnnotationClassMatcher addAnnotationClassMatcher(String matchClass, String matchMethod, String matchParam) {
+    public AnnotationClassMatcher addAnnotationClassMatcher(MethodModifier matchModifier, String matchClass, String matchMethod, String matchParam) {
         for (SingleAnnotationClassMatcher annotationClassMatcher : annotationClassMatchers) {
-            if (annotationClassMatcher.addAnnotationMethodMatcher(matchClass, matchMethod, matchParam)) {
+            if (annotationClassMatcher.addAnnotationMethodMatcher(matchModifier, matchClass, matchMethod, matchParam)) {
                 return this;
             }
         }
-        annotationClassMatchers.add(new SingleAnnotationClassMatcher(matchClass, matchMethod, matchParam));
+        annotationClassMatchers.add(new SingleAnnotationClassMatcher(matchModifier, matchClass, matchMethod, matchParam));
         return this;
     }
 

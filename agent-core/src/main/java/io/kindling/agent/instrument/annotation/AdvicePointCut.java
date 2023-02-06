@@ -21,9 +21,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import io.kindling.agent.api.MethodModifier;
+
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface AdvicePointCut {
+    MethodModifier[] matchModifiers() default {};
+
     String[] matchClasses();
 
     String[] matchMethods();

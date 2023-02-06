@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>io.kindling</groupId>
 		<artifactId>agent-plugins</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	<artifactId>plugin-traceid-pp</artifactId>
 	<name>Kindling TraceId Plugin ---- Pinpoint</name>

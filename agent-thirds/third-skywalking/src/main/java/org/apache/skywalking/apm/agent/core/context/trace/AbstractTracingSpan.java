@@ -20,8 +20,13 @@ import org.apache.skywalking.apm.agent.core.context.TracingContext;
 
 public abstract class AbstractTracingSpan implements AbstractSpan {
     protected int spanId;
+    /**
+     * Parent span id starts from 0. -1 means no parent span.
+     */
     protected int parentSpanId;
     protected String operationName;
+    protected SpanLayer layer;
+
     protected final TracingContext owner;
     protected long startTime;
     protected long endTime;
@@ -47,5 +52,16 @@ public abstract class AbstractTracingSpan implements AbstractSpan {
         this.endTime = System.currentTimeMillis();
         owner.archive(this);
         return true;
+    }
+
+    @Override
+    public AbstractTracingSpan setLayer(SpanLayer layer) {
+        this.layer = layer;
+        return this;
+    }
+
+    @Override
+    public String getOperationName() {
+        return operationName;
     }
 }

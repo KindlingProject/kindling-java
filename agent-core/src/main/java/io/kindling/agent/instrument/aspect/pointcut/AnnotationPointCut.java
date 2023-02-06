@@ -16,6 +16,7 @@
 
 package io.kindling.agent.instrument.aspect.pointcut;
 
+import io.kindling.agent.api.MethodModifier;
 import io.kindling.agent.instrument.aspect.matcher.AnnotationClassMatcher;
 import io.kindling.agent.instrument.aspect.matcher.SingleAnnotationClassMatcher;
 
@@ -23,13 +24,15 @@ public class AnnotationPointCut {
     private AnnotationClassMatcher matcher;
     private StringBuilder expressionBuilder;
 
-    public AnnotationPointCut(String matchClass, String matchMethod, String matchParam) {
-        this.matcher = new SingleAnnotationClassMatcher(matchClass, matchMethod, matchParam);
-        this.expressionBuilder = new StringBuilder(matchClass).append('.').append(matchMethod).append(matchParam);
+    public AnnotationPointCut(MethodModifier matchModifier, String matchClass, String matchMethod, String matchParam) {
+        this.matcher = new SingleAnnotationClassMatcher(matchModifier, matchClass, matchMethod, matchParam);
+        this.expressionBuilder = new StringBuilder(matchModifier.getDesc())
+        .append(' ')
+        .append(matchClass).append('.').append(matchMethod).append(matchParam);
     }
 
-    public void addMatcher(String matchClass, String matchMethod, String matchParam) {
-        this.matcher = this.matcher.addAnnotationClassMatcher(matchClass, matchMethod, matchParam);
+    public void addMatcher(MethodModifier matchModifier, String matchClass, String matchMethod, String matchParam) {
+        this.matcher = this.matcher.addAnnotationClassMatcher(matchModifier, matchClass, matchMethod, matchParam);
         this.expressionBuilder.append(" || ")
             .append(matchClass).append('.').append(matchMethod).append(matchParam);
     }

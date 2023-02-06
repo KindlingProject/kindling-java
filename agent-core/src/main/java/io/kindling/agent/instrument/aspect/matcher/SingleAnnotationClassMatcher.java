@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.kindling.agent.api.ClassStructure;
+import io.kindling.agent.api.MethodModifier;
 import io.kindling.agent.api.MethodSignature;
 import io.kindling.agent.instrument.aspect.matcher.clazz.ClassMatcher;
 import io.kindling.agent.instrument.aspect.matcher.clazz.ClassMatcherFactory;
@@ -28,21 +29,21 @@ public class SingleAnnotationClassMatcher implements AnnotationClassMatcher {
     private ClassMatcher classMatcher;
     private List<AnnotationMethodMatcher> annotationMethodMatchers = new ArrayList<AnnotationMethodMatcher>();
 
-    public SingleAnnotationClassMatcher(String matchClass, String matchMethod, String matchParam) {
+    public SingleAnnotationClassMatcher(MethodModifier matchModifier, String matchClass, String matchMethod, String matchParam) {
         this.classMatcher = ClassMatcherFactory.getInstance().createClassMatcher(matchClass);
-        this.annotationMethodMatchers.add(new AnnotationMethodMatcher(matchMethod, matchParam));
+        this.annotationMethodMatchers.add(new AnnotationMethodMatcher(matchModifier, matchMethod, matchParam));
     }
 
-    public AnnotationClassMatcher addAnnotationClassMatcher(String matchClass, String matchMethod, String matchParam) {
-        if (addAnnotationMethodMatcher(matchClass, matchMethod, matchParam)) {
+    public AnnotationClassMatcher addAnnotationClassMatcher(MethodModifier matchModifier, String matchClass, String matchMethod, String matchParam) {
+        if (addAnnotationMethodMatcher(matchModifier, matchClass, matchMethod, matchParam)) {
             return this;
         }
-        return new MultiAnnotationClassMatcher(this, new SingleAnnotationClassMatcher(matchClass, matchMethod, matchParam));
+        return new MultiAnnotationClassMatcher(this, new SingleAnnotationClassMatcher(matchModifier, matchClass, matchMethod, matchParam));
     }
 
-    public boolean addAnnotationMethodMatcher(String matchClass, String matchMethod, String matchParam) {
+    public boolean addAnnotationMethodMatcher(MethodModifier matchModifier, String matchClass, String matchMethod, String matchParam) {
         if (matchClass.equals(classMatcher.getMatchClass())) {
-            this.annotationMethodMatchers.add(new AnnotationMethodMatcher(matchMethod, matchParam));
+            this.annotationMethodMatchers.add(new AnnotationMethodMatcher(matchModifier, matchMethod, matchParam));
             return true;
         }
         return false;
@@ -57,7 +58,7 @@ public class SingleAnnotationClassMatcher implements AnnotationClassMatcher {
             return false;
         }
         for (AnnotationMethodMatcher annotationMethodMatcher : annotationMethodMatchers) {
-            if (annotationMethodMatcher.matchMethod(methodSignature.getMethodName(), methodSignature.getArgTypeArray())) {
+            if (annotationMethodMatcher.matchMethod(methodSignature.getAccess(), methodSignature.getMethodName(), methodSignature.getArgTypeArray())) {
                 return true;
             }
         }

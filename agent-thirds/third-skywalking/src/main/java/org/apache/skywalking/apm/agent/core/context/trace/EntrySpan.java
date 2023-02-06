@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package io.kindling.agent.instrument.aspect.matcher;
+package org.apache.skywalking.apm.agent.core.context.trace;
 
-import io.kindling.agent.api.ClassStructure;
-import io.kindling.agent.api.MethodModifier;
-import io.kindling.agent.api.MethodSignature;
+import org.apache.skywalking.apm.agent.core.context.TracingContext;
 
-public interface AnnotationClassMatcher {
-    public AnnotationClassMatcher addAnnotationClassMatcher(MethodModifier matchModifier, String matchClass, String matchMethod, String matchParam);
+public class EntrySpan extends StackBasedTracingSpan {
+    public EntrySpan(int spanId, int parentSpanId, String operationName, TracingContext owner) {
+        super(spanId, parentSpanId, operationName, owner);
+    }
 
-    public boolean matchClass(ClassStructure classStructure);
+    @Override
+    public boolean isEntry() {
+        return true;
+    }
 
-    public boolean matchMethod(ClassStructure classStructure, MethodSignature methodSignature);
+    @Override
+    public boolean isExit() {
+        return false;
+    }
 }
