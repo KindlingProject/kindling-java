@@ -17,6 +17,7 @@
 package io.kindling.plugin.traceid.sw;
 
 import org.apache.skywalking.apm.agent.core.context.TracingContext;
+import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 
 import io.kindling.agent.api.AdviceConfig;
 import io.kindling.agent.api.AfterAdvice;
@@ -34,7 +35,7 @@ public class StopTraceAdvice implements AfterAdvice {
     private SwAdapter adapter;
 
     public StopTraceAdvice() {
-        ADVICE_CONFIG = new AdviceConfig().enableThisParam().enableReturnObjectParam();
+        ADVICE_CONFIG = new AdviceConfig().enableThisParam().enableArg0Param().enableReturnObjectParam();
     }
 
     public void after(JoinPoint joinPoint) {
@@ -42,6 +43,11 @@ public class StopTraceAdvice implements AfterAdvice {
         if (finish != null && finish) {
             if (adapter == null) {
                 adapter = SwAdapter.getAdapter(TracingContext.class);
+            }
+            AbstractSpan span = (AbstractSpan) joinPoint.getArg0();
+            if (span.isEntry() == false && span.getOperationName().startsWith("/ShardingSphere") == false) {
+                // Ignore None Local -- ShardingSphere
+                return;
             }
             KindlingApi.exit(adapter.getReadableTraceId((TracingContext) joinPoint.getThis()));
         }

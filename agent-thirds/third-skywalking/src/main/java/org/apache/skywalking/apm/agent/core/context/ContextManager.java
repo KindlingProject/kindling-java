@@ -48,6 +48,14 @@ public class ContextManager {
         return CONTEXT.get();
     }
 
+    /**
+     * Using this method will cause NPE if active span does not exist. If one is not sure whether there is an active span, use
+     * ContextManager::isActive method to determine whether there has the active span.
+     */
+    public static AbstractSpan activeSpan() {
+        return get().activeSpan();
+    }
+
     public static boolean isActive() {
         return get() != null;
     }

@@ -16,8 +16,10 @@
 
 package io.kindling.plugin.traceid.sw;
 
+import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.context.ContextSnapshot;
 import org.apache.skywalking.apm.agent.core.context.TracingContext;
+import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 
 import io.kindling.agent.api.AdviceConfig;
 import io.kindling.agent.api.AfterAdvice;
@@ -44,7 +46,12 @@ public class ContinueTraceAdvice implements AfterAdvice {
             if (adapter == null) {
                 adapter = SwAdapter.getAdapter(TracingContext.class);
             }
-            KindlingApi.enter(adapter.getSnapShotTraceId(snapshot));
+            if (snapshot.getParentEndpoint() != null && snapshot.getParentEndpoint().startsWith("/ShardingSphere")) {
+                AbstractSpan span = ContextManager.activeSpan();
+                KindlingApi.startDb(adapter.getSnapShotTraceId(snapshot), span.getOperationName(), "skywalking");
+            } else {
+                KindlingApi.enter(adapter.getSnapShotTraceId(snapshot));
+            }
         }
     }
 

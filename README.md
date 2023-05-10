@@ -12,7 +12,7 @@ Features
 $ mvn clean package -Dmaven.test.skip=true
 
 kindling-java
-├── 1.0.3
+├── 1.0.4
 │   ├── agent-core.jar
 │   ├── plugin-span-pp.jar
 │   ├── plugin-span-sw.jar

@@ -16,6 +16,8 @@
 
 package org.apache.skywalking.apm.agent.core.context;
 
+import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
+
 public interface AbstractTracerContext {
     /**
      * Get the global trace id, if needEnhance. How to build, depends on the implementation.
@@ -24,4 +26,8 @@ public interface AbstractTracerContext {
      */
     String getReadablePrimaryTraceId();
 
+    /**
+     * @return the active span of current tracing context(stack)
+     */
+    AbstractSpan activeSpan();
 }

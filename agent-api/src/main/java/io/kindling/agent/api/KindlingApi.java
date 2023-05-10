@@ -29,6 +29,7 @@ public class KindlingApi {
     private static final List<String> IGNORE_TRACES = Arrays.asList("Ignored_Trace");
     private static final String PROTOCOL_HTTP = "http";
     private static final String PROTOCOL_RPC = "rpc";
+    private static final String PROTOCOL_DB = "db";
 
     private static FileOutputStream out;
 
@@ -84,6 +85,13 @@ public class KindlingApi {
             return;
         }
         recordProtcolEndpoint(traceId, PROTOCOL_RPC, endpoint, apmType);
+    }
+
+    public static void startDb(String traceId, String endpoint, String apmType) {
+        if (out == null) {
+            return;
+        }
+        recordProtcolEndpoint(traceId, PROTOCOL_DB, endpoint, apmType);
     }
 
     private static void recordProtcolEndpoint(String traceId, String protocol, String endpoint, String apmType) {
